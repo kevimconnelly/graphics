@@ -82,8 +82,7 @@ int main()
 
 	std::string texturePath = "Textures/pop_cat.png";
 
-	// Texture
-	Texture popCat(texturePath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	Texture popCat("Textures/pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	popCat.texUnit(shaderProgram, "tex0", 0);
 
 	// Main while loop
