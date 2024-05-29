@@ -119,6 +119,7 @@ int main()
 		{
 			rotation += 0.5f;
 			prevTime = crntTime;
+			glfwSwapInterval(1);
 		}
 
 		// Initializes matrices so they are not the null matrix
