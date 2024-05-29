@@ -4,6 +4,7 @@
 #include"shaderClass.h"
 #include"VAO.h"
 #include"VBO.h"
+#include"EBO.h"
 
 // Vertices coordinates
 GLfloat vertices[] =
@@ -14,6 +15,13 @@ GLfloat vertices[] =
 	-0.2f, -0.5f * float(sqrt(3)) / 3, 0.0f,
 	-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
 	-0.2f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,
+};
+
+GLuint indices[] =
+{
+	0, 3, 5, // Lower left triangle
+	3, 2, 4, // Lower right triangle
+	5, 4, 1 // Upper triangle
 };
 
 int main()
@@ -55,11 +63,14 @@ int main()
 	// Generates Vertex Buffer Object and links it to vertices
 	VBO VBO1(vertices, sizeof(vertices));
 
+	EBO EBO1(indices, sizeof(indices));
+
 	// Links VBO to VAO
 	VAO1.LinkVBO(VBO1, 0);
 
 	VAO1.Unbind();
 	VBO1.Unbind();
+	EBO1.Unbind();
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -85,6 +96,7 @@ int main()
 	// Delete all the objects we've created
 	VAO1.Delete();
 	VBO1.Delete();
+	EBO1.Delete();
 	shaderProgram.Delete();
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
