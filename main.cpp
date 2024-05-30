@@ -11,6 +11,7 @@
 #include"VAO.h"
 #include"VBO.h"
 #include"EBO.h"
+#include"Camera.h"
 
 const unsigned int width = 800;
 const unsigned int height = 800;
@@ -103,6 +104,9 @@ int main()
 	// Enables the Depth Buffer
 	glEnable(GL_DEPTH_TEST);
 
+	// Creates camera object
+	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -112,6 +116,11 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Tell OpenGL which Shader Program we want to use
 		shaderProgram.Activate();
+
+		// Handles camera inputs
+		camera.Inputs(window);
+		// Updates and exports the camera matrix to the Vertex Shader
+		camera.Matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
 
 		// Simple timer
 		double crntTime = glfwGetTime();
