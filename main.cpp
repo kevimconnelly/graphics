@@ -26,6 +26,27 @@ GLfloat vertices[] =
 	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	2.5f, 5.0f
 };
 
+// Vertices coordinates
+GLfloat plankVertices[] =
+{ //     COORDINATES     /        COLORS        /    TexCoord    /       NORMALS     //
+	-2.0f, 0.0f,  2.0f,		0.0f, 0.0f, 0.0f,		0.0f, 0.0f,		0.0f, 2.0f, 0.0f,
+	-2.0f, 0.0f, -2.0f,		0.0f, 0.0f, 0.0f,		0.0f, 2.0f,		0.0f, 2.0f, 0.0f,
+	 2.0f, 0.0f, -2.0f,		0.0f, 0.0f, 0.0f,		2.0f, 2.0f,		0.0f, 2.0f, 0.0f,
+	 2.0f, 0.0f,  2.0f,		0.0f, 0.0f, 0.0f,		2.0f, 0.0f,		0.0f, 2.0f, 0.0f
+};
+
+GLfloat lightVertices[] =
+{ //     COORDINATES     //
+	-0.1f, -0.1f,  0.1f,
+	-0.1f, -0.1f, -0.1f,
+	 0.1f, -0.1f, -0.1f,
+	 0.1f, -0.1f,  0.1f,
+	-0.1f,  0.1f,  0.1f,
+	-0.1f,  0.1f, -0.1f,
+	 0.1f,  0.1f, -0.1f,
+	 0.1f,  0.1f,  0.1f
+};
+
 // Indices for vertices order
 GLuint indices[] =
 {
@@ -35,6 +56,29 @@ GLuint indices[] =
 	1, 2, 4,
 	2, 3, 4,
 	3, 0, 4
+};
+
+// Indices for vertices order
+GLuint plankIndices[] =
+{
+	0, 1, 2,
+	0, 2, 3
+};
+
+GLuint lightIndices[] =
+{
+	0, 1, 2,
+	0, 2, 3,
+	0, 4, 7,
+	0, 7, 3,
+	3, 7, 6,
+	3, 6, 2,
+	2, 6, 5,
+	2, 5, 1,
+	1, 5, 4,
+	1, 4, 0,
+	4, 5, 6,
+	4, 6, 7
 };
 
 int main()
@@ -71,15 +115,20 @@ int main()
 	Shader shaderProgram("default.vert", "default.frag");
 
 	VAO VAO1;
+	VAO VAO2;
+
+	//VBO VBO1(vertices, sizeof(vertices));
+	//EBO EBO1(indices, sizeof(indices));
+
+	
 	VAO1.Bind();
 
 	// Generates Vertex Buffer Object and links it to vertices
 	VBO VBO1(vertices, sizeof(vertices));
-
 	EBO EBO1(indices, sizeof(indices));
 
 	// Links VBO to VAO
-	//VAO1.LinkVBO(VBO1, 0);
+	VAO1.LinkVBO(VBO1, 0);
 
 	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
 	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -88,14 +137,34 @@ int main()
 	VAO1.Unbind();
 	VBO1.Unbind();
 	EBO1.Unbind();
+	
+
+
+
+
+
+	VAO2.Bind();
+	VBO VBO2(plankVertices, sizeof(plankVertices));
+	EBO EBO2(plankIndices, sizeof(plankIndices));
+
+	VAO2.LinkVBO(VBO2, 1);
+
+	VAO2.LinkAttrib(VBO2, 0, 3, GL_FLOAT, 11 * sizeof(float), (void*)0);
+	VAO2.LinkAttrib(VBO2, 1, 3, GL_FLOAT, 11 * sizeof(float), (void*)(3 * sizeof(float)));
+	VAO2.LinkAttrib(VBO2, 2, 2, GL_FLOAT, 11 * sizeof(float), (void*)(6 * sizeof(float)));
+	VAO2.LinkAttrib(VBO2, 3, 3, GL_FLOAT, 11 * sizeof(float), (void*)(8 * sizeof(float)));
+
+	VAO2.Unbind();
+	VBO2.Unbind();
+	EBO2.Unbind();
 
 	// Gets ID of uniform called "scale"
 	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
 	std::string texturePath = "Textures/brick.png";
 
-	Texture popCat("Textures/brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	popCat.texUnit(shaderProgram, "tex0", 0);
+	Texture brick("Textures/brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	brick.texUnit(shaderProgram, "tex0", 0);
 
 	// Variables that help the rotation of the pyramid
 	float rotation = 0.0f;
@@ -152,11 +221,19 @@ int main()
 		// Assigns a value to the uniform; NOTE: Must always be done after activating the Shader Program
 		glUniform1f(uniID, 0.5f);
 		// Binds texture so that is appears in rendering
-		popCat.Bind();
+		brick.Bind();
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices
 		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		VAO1.Unbind();
+
+		VAO2.Bind();
+		glDrawElements(GL_TRIANGLES, sizeof(plankIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		VAO2.Unbind();
+		
+		
+
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 		// Take care of all GLFW events
@@ -167,7 +244,10 @@ int main()
 	VAO1.Delete();
 	VBO1.Delete();
 	EBO1.Delete();
-	popCat.Delete();
+	VAO2.Delete();
+	VBO2.Delete();
+	EBO2.Delete();
+	brick.Delete();
 	shaderProgram.Delete();
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
