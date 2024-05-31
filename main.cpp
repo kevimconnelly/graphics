@@ -92,9 +92,9 @@ int main()
 	// Gets ID of uniform called "scale"
 	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
-	std::string texturePath = "Textures/pop_cat.png";
+	std::string texturePath = "Textures/brick.png";
 
-	Texture popCat("Textures/pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	Texture popCat("Textures/brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	popCat.texUnit(shaderProgram, "tex0", 0);
 
 	// Variables that help the rotation of the pyramid
