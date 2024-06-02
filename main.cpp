@@ -142,7 +142,6 @@ int main()
 	VBO1.Unbind();
 	EBO1.Unbind();
 
-
 	// Shader for light cube
 	Shader lightShader("light.vert", "light.frag");
 	// Generates Vertex Array Object and binds it
@@ -162,13 +161,17 @@ int main()
 
 
 	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
+	glm::vec3 lightPos = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::mat4 lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
 
 	glm::vec3 pyramidPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::mat4 pyramidModel = glm::mat4(1.0f);
 	pyramidModel = glm::translate(pyramidModel, pyramidPos);
+
+	glm::vec3 floorPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::mat4 floorModel = glm::mat4(1.0f);
+	floorModel = glm::translate(floorModel, floorPos);
 
 
 	lightShader.Activate();
@@ -178,7 +181,6 @@ int main()
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
 	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-
 
 
 	/*
@@ -233,7 +235,7 @@ int main()
 		VAO1.Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices
 		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
-
+		VAO1.Unbind();
 
 
 		// Tells OpenGL which Shader Program we want to use
