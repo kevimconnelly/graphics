@@ -166,6 +166,8 @@
     <None Include="default.vert" />
     <None Include="light.frag" />
     <None Include="light.vert" />
+    <None Include="pyramid.frag" />
+    <None Include="pyramid.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />

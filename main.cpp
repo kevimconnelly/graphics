@@ -47,7 +47,7 @@ GLfloat vertices[] =
 
 	 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
 	-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
-	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f,  0.8f  // Facing side
+	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f,  0.8f,  // Facing side
 };
 
 // Indices for vertices order
@@ -87,6 +87,40 @@ GLuint lightIndices[] =
 	1, 4, 0,
 	4, 5, 6,
 	4, 6, 7
+};
+
+GLfloat pyramid2Vertices[] = {
+	//     COORDINATES     /        COLORS          /    TexCoord   /        NORMALS       //
+   -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
+   -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 5.0f,      0.0f, -1.0f, 0.0f, // Bottom side
+	0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 5.0f,      0.0f, -1.0f, 0.0f, // Bottom side
+	0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
+
+   -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
+   -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
+	0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,     -0.8f, 0.5f,  0.0f, // Left Side
+
+   -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
+	0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
+	0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
+
+	0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
+	0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
+	0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.8f, 0.5f,  0.0f, // Right side
+
+	0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
+   -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
+	0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f,  0.8f,  // Facing side
+};
+
+GLuint pyramid2Indices[] =
+{
+	0, 1, 2, // Bottom side
+	0, 2, 3, // Bottom side
+	4, 6, 5, // Left side
+	7, 9, 8, // Non-facing side
+	10, 12, 11, // Right side
+	13, 15, 14 // Facing side
 };
 
 
@@ -158,16 +192,39 @@ int main()
 	lightVBO.Unbind();
 	lightEBO.Unbind();
 
+	// Generates Shader object using shaders default.vert and default.frag
+	Shader pyramidShader("default.vert", "default.frag");
+	// Generates Vertex Array Object and binds it
+	VAO VAO2;
+	VAO2.Bind();
+	// Generates Vertex Buffer Object and links it to vertices
+	VBO VBO2(pyramid2Vertices, sizeof(pyramid2Vertices));
+	// Generates Element Buffer Object and links it to indices
+	EBO EBO2(pyramid2Indices, sizeof(pyramid2Indices));
+	// Links VBO attributes such as coordinates and colors to VAO
+	VAO2.LinkAttrib(VBO2, 0, 3, GL_FLOAT, 11 * sizeof(float), (void*)0);
+	VAO2.LinkAttrib(VBO2, 1, 3, GL_FLOAT, 11 * sizeof(float), (void*)(3 * sizeof(float)));
+	VAO2.LinkAttrib(VBO2, 2, 2, GL_FLOAT, 11 * sizeof(float), (void*)(6 * sizeof(float)));
+	VAO2.LinkAttrib(VBO2, 3, 3, GL_FLOAT, 11 * sizeof(float), (void*)(8 * sizeof(float)));
+	// Unbind all to prevent accidentally modifying them
+	VAO2.Unbind();
+	VBO2.Unbind();
+	EBO2.Unbind();
+
 
 
 	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	glm::vec3 lightPos = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 lightPos = glm::vec3(1.0f, 1.0f, -0.5f);
 	glm::mat4 lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
 
 	glm::vec3 pyramidPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::mat4 pyramidModel = glm::mat4(1.0f);
 	pyramidModel = glm::translate(pyramidModel, pyramidPos);
+
+	glm::vec3 pyramid2Pos = glm::vec3(2.0f, 0.0f, 0.0f);
+	glm::mat4 pyramid2Model = glm::mat4(1.0f);
+	pyramid2Model = glm::translate(pyramid2Model, pyramid2Pos);
 
 	glm::vec3 floorPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::mat4 floorModel = glm::mat4(1.0f);
@@ -181,6 +238,10 @@ int main()
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
 	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	pyramidShader.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(pyramidShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramid2Model));
+	glUniform4f(glGetUniformLocation(pyramidShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(pyramidShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
 
 	/*
@@ -237,6 +298,18 @@ int main()
 		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		VAO1.Unbind();
 
+		pyramidShader.Activate();
+		glUniform3f(glGetUniformLocation(pyramidShader.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+		// Export the camMatrix to the Vertex Shader of the pyramid
+		camera.Matrix(pyramidShader, "camMatrix");
+		// Binds texture so that is appears in rendering
+		brickTex.Bind();
+		// Bind the VAO so OpenGL knows to use it
+		VAO2.Bind();
+		// Draw primitives, number of indices, datatype of indices, index of indices
+		glDrawElements(GL_TRIANGLES, sizeof(pyramid2Indices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		VAO2.Unbind();
+
 
 		// Tells OpenGL which Shader Program we want to use
 		lightShader.Activate();
@@ -246,6 +319,8 @@ int main()
 		lightVAO.Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices
 		glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+
+
 
 
 		// Swap the back buffer with the front buffer
