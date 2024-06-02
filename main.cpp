@@ -23,7 +23,19 @@ namespace fs = std::filesystem;
 const unsigned int width = 800;
 const unsigned int height = 800;
 
+GLfloat groundVertices[] =
+{ //     COORDINATES     //
+	-2.5f, 0.0f,  2.5f,
+	-2.5f, 0.0f, -2.5f,
+	 2.5f, 0.0f, -2.5f,    
+	 2.5f, 0.0f,  2.5f, 
+};
 
+GLuint groundIndices[] =
+{
+	0, 1, 2, // Bottom side
+	0, 2, 3, // Bottom side
+};
 
 // Vertices coordinates
 GLfloat vertices[] =
@@ -211,6 +223,15 @@ int main()
 	VBO2.Unbind();
 	EBO2.Unbind();
 
+	Shader groundShader("default.vert", "default.frag");
+	VAO groundVAO;
+	groundVAO.Bind();
+	VBO groundVBO(groundVertices, sizeof(groundVertices));
+	EBO groundEBO(groundIndices, sizeof(groundIndices));
+	groundVAO.LinkAttrib(groundVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+	groundVAO.Unbind();
+	groundVBO.Unbind();
+	groundEBO.Unbind();
 
 
 	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -225,10 +246,10 @@ int main()
 	glm::vec3 pyramid2Pos = glm::vec3(2.0f, 0.0f, 0.0f);
 	glm::mat4 pyramid2Model = glm::mat4(1.0f);
 	pyramid2Model = glm::translate(pyramid2Model, pyramid2Pos);
-
-	glm::vec3 floorPos = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::mat4 floorModel = glm::mat4(1.0f);
-	floorModel = glm::translate(floorModel, floorPos);
+	
+	glm::vec3 groundPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::mat4 groundModel = glm::mat4(1.0f);
+	groundModel = glm::translate(groundModel, groundPos);
 
 
 	lightShader.Activate();
@@ -242,6 +263,10 @@ int main()
 	glUniformMatrix4fv(glGetUniformLocation(pyramidShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramid2Model));
 	glUniform4f(glGetUniformLocation(pyramidShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(pyramidShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	groundShader.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(groundShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(groundModel));
+	glUniform4f(glGetUniformLocation(groundShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(groundShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
 
 	/*
@@ -310,6 +335,14 @@ int main()
 		glDrawElements(GL_TRIANGLES, sizeof(pyramid2Indices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		VAO2.Unbind();
 
+		groundShader.Activate();
+		glUniform3f(glGetUniformLocation(groundShader.ID, "cmaPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+		camera.Matrix(groundShader, "camMatrix");
+		brickTex.Bind();
+		groundVAO.Bind();
+		glDrawElements(GL_TRIANGLES, sizeof(groundIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		groundVAO.Unbind();
+
 
 		// Tells OpenGL which Shader Program we want to use
 		lightShader.Activate();
@@ -335,6 +368,12 @@ int main()
 	VAO1.Delete();
 	VBO1.Delete();
 	EBO1.Delete();
+	VAO2.Delete();
+	VBO2.Delete();
+	EBO2.Delete();
+	groundVAO.Delete();
+	groundVBO.Delete();
+	groundEBO.Delete();
 	brickTex.Delete();
 	shaderProgram.Delete();
 	lightVAO.Delete();
