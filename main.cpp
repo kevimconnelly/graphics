@@ -261,6 +261,9 @@ int main()
 	Texture plankTex("Textures/planks.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	plankTex.texUnit(shaderProgram, "tex0", 0);
 
+	Texture planksSpec("Textures/planksSpec.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RED, GL_UNSIGNED_BYTE);
+	planksSpec.texUnit(shaderProgram, "tex1", 1);
+
 	// Enables the Depth Buffer
 	glEnable(GL_DEPTH_TEST);
 
@@ -307,6 +310,7 @@ int main()
 		glUniform3f(glGetUniformLocation(groundShader.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 		camera.Matrix(groundShader, "camMatrix");
 		plankTex.Bind();
+		planksSpec.Bind();
 		groundVAO.Bind();
 		glDrawElements(GL_TRIANGLES, sizeof(groundIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		groundVAO.Unbind();
@@ -340,6 +344,7 @@ int main()
 	groundEBO.Delete();
 	brickTex.Delete();
 	plankTex.Delete();
+	planksSpec.Delete();
 	shaderProgram.Delete();
 	lightVAO.Delete();
 	lightVBO.Delete();
