@@ -25,10 +25,10 @@ const unsigned int height = 800;
 
 GLfloat groundVertices[] =
 { //     COORDINATES     //
-	-2.5f, 0.0f,  2.5f,
-	-2.5f, 0.0f, -2.5f,
-	 2.5f, 0.0f, -2.5f,    
-	 2.5f, 0.0f,  2.5f, 
+	  -10.0f,  10.0f,    0.0f,   // 0.83f, 0.70f, 0.44f,    0.0f, 0.0f,      0.0f,  0.0f, 0.0f, // Bottom side
+	  -10.0f,  10.0f,    0.0f,   // 0.83f, 0.70f, 0g.44f,    0.0f, 5.0f,      0.0f,  0.0f, 0.0f, // Bottom side
+	  10.0f,  -10.0f,    0.0f,    //0.83f, 0.70f, 0.44f,    5.0f, 5.0f,      0.0f,  0.0f, 0.0f, // Bottom side   
+	  10.0f,  -10.0f,    0.0f,    //0.83f, 0.70f, 0.44f,    5.0f, 0.0f,      0.0f, .0f, 0.0f, // Bottom side
 };
 
 GLuint groundIndices[] =
@@ -36,6 +36,7 @@ GLuint groundIndices[] =
 	0, 1, 2, // Bottom side
 	0, 2, 3, // Bottom side
 };
+
 
 // Vertices coordinates
 GLfloat vertices[] =
@@ -228,7 +229,10 @@ int main()
 	groundVAO.Bind();
 	VBO groundVBO(groundVertices, sizeof(groundVertices));
 	EBO groundEBO(groundIndices, sizeof(groundIndices));
-	groundVAO.LinkAttrib(groundVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+	groundVAO.LinkAttrib(groundVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)(sizeof(float)));
+	groundVAO.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 11 * sizeof(float), (void*)(3 * sizeof(float)));
+	groundVAO.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 11 * sizeof(float), (void*)(6 * sizeof(float)));
+	groundVAO.LinkAttrib(VBO1, 3, 3, GL_FLOAT, 11 * sizeof(float), (void*)(8 * sizeof(float)));
 	groundVAO.Unbind();
 	groundVBO.Unbind();
 	groundEBO.Unbind();
@@ -336,7 +340,7 @@ int main()
 		VAO2.Unbind();
 
 		groundShader.Activate();
-		glUniform3f(glGetUniformLocation(groundShader.ID, "cmaPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+		glUniform3f(glGetUniformLocation(groundShader.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 		camera.Matrix(groundShader, "camMatrix");
 		brickTex.Bind();
 		groundVAO.Bind();
@@ -373,7 +377,7 @@ int main()
 	EBO2.Delete();
 	groundVAO.Delete();
 	groundVBO.Delete();
-	groundEBO.Delete();
+	//groundEBO.Delete();
 	brickTex.Delete();
 	shaderProgram.Delete();
 	lightVAO.Delete();
