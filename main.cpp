@@ -1,8 +1,3 @@
-//------- Ignore this ----------
-#include<filesystem>
-namespace fs = std::filesystem;
-//------------------------------
-
 #include<iostream>
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
@@ -17,8 +12,6 @@ namespace fs = std::filesystem;
 #include"VBO.h"
 #include"EBO.h"
 #include"Camera.h"
-
-
 
 const unsigned int width = 800;
 const unsigned int height = 800;
@@ -191,35 +184,24 @@ int main()
 
 	// Shader for light cube
 	Shader lightShader("light.vert", "light.frag");
-	// Generates Vertex Array Object and binds it
 	VAO lightVAO;
 	lightVAO.Bind();
-	// Generates Vertex Buffer Object and links it to vertices
 	VBO lightVBO(lightVertices, sizeof(lightVertices));
-	// Generates Element Buffer Object and links it to indices
 	EBO lightEBO(lightIndices, sizeof(lightIndices));
-	// Links VBO attributes such as coordinates and colors to VAO
 	lightVAO.LinkAttrib(lightVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-	// Unbind all to prevent accidentally modifying them
 	lightVAO.Unbind();
 	lightVBO.Unbind();
 	lightEBO.Unbind();
 
-	// Generates Shader object using shaders default.vert and default.frag
 	Shader pyramidShader("default.vert", "default.frag");
-	// Generates Vertex Array Object and binds it
 	VAO VAO2;
 	VAO2.Bind();
-	// Generates Vertex Buffer Object and links it to vertices
 	VBO VBO2(pyramid2Vertices, sizeof(pyramid2Vertices));
-	// Generates Element Buffer Object and links it to indices
 	EBO EBO2(pyramid2Indices, sizeof(pyramid2Indices));
-	// Links VBO attributes such as coordinates and colors to VAO
 	VAO2.LinkAttrib(VBO2, 0, 3, GL_FLOAT, 11 * sizeof(float), (void*)0);
 	VAO2.LinkAttrib(VBO2, 1, 3, GL_FLOAT, 11 * sizeof(float), (void*)(3 * sizeof(float)));
 	VAO2.LinkAttrib(VBO2, 2, 2, GL_FLOAT, 11 * sizeof(float), (void*)(6 * sizeof(float)));
 	VAO2.LinkAttrib(VBO2, 3, 3, GL_FLOAT, 11 * sizeof(float), (void*)(8 * sizeof(float)));
-	// Unbind all to prevent accidentally modifying them
 	VAO2.Unbind();
 	VBO2.Unbind();
 	EBO2.Unbind();
@@ -272,21 +254,6 @@ int main()
 	glUniform4f(glGetUniformLocation(groundShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(groundShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
-
-	/*
-	* I'm doing this relative path thing in order to centralize all the resources into one folder and not
-	* duplicate them between tutorial folders. You can just copy paste the resources from the 'Resources'
-	* folder and then give a relative path from this folder to whatever resource you want to get to.
-	* Also note that this requires C++17, so go to Project Properties, C/C++, Language, and select C++17
-
-	std::string parentDir = (fs::current_path().fs::path::parent_path()).string();
-	std::string texPath = "/Resources/YoutubeOpenGL 7 - Going 3D/";
-	*/
-
-	// Texture
-	//Texture brickTex((parentDir + texPath + "brick.png").c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	//brickTex.texUnit(shaderProgram, "tex0", 0);
-
 	// Original code from the tutorial
 	Texture brickTex("Textures/brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	brickTex.texUnit(shaderProgram, "tex0", 0);
@@ -330,13 +297,9 @@ int main()
 
 		pyramidShader.Activate();
 		glUniform3f(glGetUniformLocation(pyramidShader.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
-		// Export the camMatrix to the Vertex Shader of the pyramid
 		camera.Matrix(pyramidShader, "camMatrix");
-		// Binds texture so that is appears in rendering
 		brickTex.Bind();
-		// Bind the VAO so OpenGL knows to use it
 		VAO2.Bind();
-		// Draw primitives, number of indices, datatype of indices, index of indices
 		glDrawElements(GL_TRIANGLES, sizeof(pyramid2Indices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		VAO2.Unbind();
 
@@ -358,10 +321,6 @@ int main()
 		// Draw primitives, number of indices, datatype of indices, index of indices
 		glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 
-
-
-
-		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 		// Take care of all GLFW events
 		glfwPollEvents();
@@ -386,9 +345,7 @@ int main()
 	lightVBO.Delete();
 	lightEBO.Delete();
 	lightShader.Delete();
-	// Delete window before ending the program
 	glfwDestroyWindow(window);
-	// Terminate GLFW before ending the program
 	glfwTerminate();
 	return 0;
 }
