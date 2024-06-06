@@ -124,6 +124,7 @@ int main()
 	// Create floor mesh
 	Mesh floor(verts, ind, tex);
 
+	Shader boxShader("default.vert", "default.frag");
 	std::vector <Vertex> boxVerts(boxVertices, boxVertices + sizeof(boxVertices) / sizeof(Vertex));
 	std::vector <GLuint> boxInd(boxIndices, boxIndices + sizeof(boxIndices) / sizeof(GLuint));
 	Mesh box(boxVerts, boxInd, tex);
@@ -147,7 +148,7 @@ int main()
 	glm::mat4 objectModel = glm::mat4(1.0f);
 	objectModel = glm::translate(objectModel, objectPos);
 
-	glm::vec3 boxPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 boxPos = glm::vec3(0.0f, 0.1f, 0.0f);
 	glm::mat4 boxModel = glm::mat4(1.0f);
 	boxModel = glm::translate(boxModel, boxPos);
 
@@ -159,6 +160,10 @@ int main()
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(objectModel));
 	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	boxShader.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(boxShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(boxModel));
+	glUniform4f(glGetUniformLocation(boxShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(boxShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
 
 	// Enables the Depth Buffer
@@ -183,7 +188,7 @@ int main()
 		// Draws different meshes
 		floor.Draw(shaderProgram, camera);
 		light.Draw(lightShader, camera);
-		box.Draw(shaderProgram, camera);
+		box.Draw(boxShader, camera);
 
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
@@ -194,6 +199,7 @@ int main()
 	// Delete all the objects we've created
 	shaderProgram.Delete();
 	lightShader.Delete();
+	boxShader.Delete();
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
 	// Terminate GLFW before ending the program
