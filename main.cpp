@@ -129,6 +129,11 @@ int main()
 	std::vector <GLuint> boxInd(boxIndices, boxIndices + sizeof(boxIndices) / sizeof(GLuint));
 	Mesh box(boxVerts, boxInd, tex);
 
+	Shader boxShader2("default.vert", "default.frag");
+	//std::vector <Vertex> boxVerts(boxVertices, boxVertices + sizeof(boxVertices) / sizeof(Vertex));
+	//std::vector <GLuint> boxInd(boxIndices, boxIndices + sizeof(boxIndices) / sizeof(GLuint));
+	Mesh box2(boxVerts, boxInd, tex);
+
 
 	// Shader for light cube
 	Shader lightShader("light.vert", "light.frag");
@@ -152,6 +157,10 @@ int main()
 	glm::mat4 boxModel = glm::mat4(1.0f);
 	boxModel = glm::translate(boxModel, boxPos);
 
+	glm::vec3 boxPos2 = glm::vec3(0.3f, 0.1f, 0.2f);
+	glm::mat4 boxModel2 = glm::mat4(1.0f);
+	boxModel2 = glm::translate(boxModel2, boxPos2);
+
 
 	lightShader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
@@ -164,6 +173,10 @@ int main()
 	glUniformMatrix4fv(glGetUniformLocation(boxShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(boxModel));
 	glUniform4f(glGetUniformLocation(boxShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(boxShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	boxShader2.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(boxShader2.ID, "model"), 1, GL_FALSE, glm::value_ptr(boxModel2));
+	glUniform4f(glGetUniformLocation(boxShader2.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(boxShader2.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
 
 	// Enables the Depth Buffer
@@ -189,6 +202,7 @@ int main()
 		floor.Draw(shaderProgram, camera);
 		light.Draw(lightShader, camera);
 		box.Draw(boxShader, camera);
+		box2.Draw(boxShader2, camera);
 
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
@@ -200,6 +214,7 @@ int main()
 	shaderProgram.Delete();
 	lightShader.Delete();
 	boxShader.Delete();
+	boxShader2.Delete();
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
 	// Terminate GLFW before ending the program
