@@ -4,7 +4,7 @@ const unsigned int width = 800;
 const unsigned int height = 800;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window);
+void processInput(GLFWwindow* window, Mesh mesh, Shader shader, Camera camera);
 
 // Vertices coordinates
 Vertex vertices[] =
@@ -200,7 +200,8 @@ int main()
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
-		processInput(window);
+		
+		
 		// Specify the color of the background
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		// Clean the back buffer and depth buffer
@@ -212,9 +213,9 @@ int main()
 		camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
 		// Draws different meshes
+		processInput(window, box, boxShader, camera);
 		floor.Draw(shaderProgram, camera);
 		light.Draw(lightShader, camera);
-		box.Draw(boxShader, camera);
 		box2.Draw(boxShader2, camera);
 
 		// Swap the back buffer with the front buffer
@@ -240,8 +241,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 };
 
-void processInput(GLFWwindow* window)
+void processInput(GLFWwindow* window, Mesh mesh, Shader shader, Camera camera)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+	else if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+		mesh.Draw(shader, camera);
 }
