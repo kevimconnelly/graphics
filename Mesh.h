@@ -22,5 +22,6 @@ public:
 
 	// Draws the mesh
 	void Draw(Shader& shader, Camera& camera);
+	void Inputs(GLFWwindow* window, Shader& shader, Camera& camera, Mesh& mesh);
 };
 #endif

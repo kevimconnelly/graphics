@@ -4,7 +4,7 @@ const unsigned int width = 800;
 const unsigned int height = 800;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window, Mesh mesh, Shader shader, Camera camera);
+//void processInput(GLFWwindow* window, Mesh mesh, Shader shader, Camera camera);
 
 // Vertices coordinates
 Vertex vertices[] =
@@ -105,6 +105,7 @@ int main()
 	// Introduce the window into the current context
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	
 
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -213,10 +214,12 @@ int main()
 		camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
 		// Draws different meshes
-		processInput(window, box, boxShader, camera);
+		
 		floor.Draw(shaderProgram, camera);
 		light.Draw(lightShader, camera);
 		box2.Draw(boxShader2, camera);
+
+		box.Inputs(window, shaderProgram, camera, box);
 
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);

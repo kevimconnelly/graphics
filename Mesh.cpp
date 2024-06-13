@@ -55,3 +55,12 @@ void Mesh::Draw(Shader& shader, Camera& camera)
 	// Draw the actual mesh
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }
+
+void Mesh::Inputs(GLFWwindow* window, Shader& shader, Camera& camera, Mesh& mesh)
+{
+	// Handles key inputs
+	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+	{
+	mesh.Draw(shader, camera);
+	}
+}
