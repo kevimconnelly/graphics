@@ -4,7 +4,27 @@ const unsigned int width = 800;
 const unsigned int height = 800;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-//void processInput(GLFWwindow* window, Mesh mesh, Shader shader, Camera camera);
+void processInput(GLFWwindow* window);
+
+const char *triangleVertexShaderSource = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+	"}\0";
+
+const char *triangleFragmentShaderSource = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0);\n"
+	"}\0";
+
+float triangleVertices[] = {
+	-0.5f, -0.5f, 0.0f,
+	 0.5f, -0.5f, 0.0f,
+	 0.0f,  0.5f, 0.0f,
+};
 
 // Vertices coordinates
 Vertex vertices[] =
@@ -192,6 +212,25 @@ int main()
 	glUniform3f(glGetUniformLocation(boxShader2.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
 
+
+
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), triangleVertices, GL_STATIC_DRAW);
+
+	
+	unsigned int triangleVertexShader;
+	triangleVertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(triangleVertexShader, 1, &triangleVertexShaderSource, NULL);
+	glCompileShader(triangleVertexShader);
+
+	unsigned int triangleFragmentShader;
+	triangleFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(triangleFragmentShader, 1, &triangleVertexShaderSource, NULL);
+	glCompileShader(triangleFragmentShader);
+
+
 	// Enables the Depth Buffer
 	glEnable(GL_DEPTH_TEST);
 
@@ -201,7 +240,7 @@ int main()
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
-		
+		processInput(window);
 		
 		// Specify the color of the background
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
@@ -214,12 +253,11 @@ int main()
 		camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
 		// Draws different meshes
-		
 		floor.Draw(shaderProgram, camera);
-		light.Draw(lightShader, camera);
-		box2.Draw(boxShader2, camera);
 
 		box.Inputs(window, shaderProgram, camera, box);
+		box2.Inputs(window, boxShader2, camera, box2);
+		light.Inputs(window, lightShader, camera, light);
 
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
@@ -244,10 +282,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 };
 
-void processInput(GLFWwindow* window, Mesh mesh, Shader shader, Camera camera)
+void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-	else if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
-		mesh.Draw(shader, camera);
 }
