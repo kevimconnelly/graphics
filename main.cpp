@@ -3,6 +3,8 @@
 const unsigned int width = 800;
 const unsigned int height = 800;
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
 // Vertices coordinates
 Vertex vertices[] =
 { //               COORDINATES           /            COLORS          /           NORMALS         /       TEXTURE COORDINATES    //
@@ -91,6 +93,7 @@ int main()
 
 	// Create a GLFWwindow object of 800 by 800 pixels, naming it "OpenGL"
 	GLFWwindow* window = glfwCreateWindow(width, height, "OpenGL", NULL, NULL);
+	
 	// Error check if the window fails to create
 	if (window == NULL)
 	{
@@ -100,6 +103,7 @@ int main()
 	}
 	// Introduce the window into the current context
 	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -228,3 +232,8 @@ int main()
 	glfwTerminate();
 	return 0;
 }
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+};
