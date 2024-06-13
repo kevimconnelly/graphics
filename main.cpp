@@ -4,6 +4,7 @@ const unsigned int width = 800;
 const unsigned int height = 800;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void processInput(GLFWwindow* window);
 
 // Vertices coordinates
 Vertex vertices[] =
@@ -199,6 +200,7 @@ int main()
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
+		processInput(window);
 		// Specify the color of the background
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		// Clean the back buffer and depth buffer
@@ -237,3 +239,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 };
+
+void processInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
