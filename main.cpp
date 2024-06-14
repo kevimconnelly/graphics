@@ -21,9 +21,15 @@ const char *triangleFragmentShaderSource = "#version 330 core\n"
 	"}\0";
 
 float triangleVertices[] = {
-	-0.5f, -0.5f, 0.0f,
-	 0.5f, -0.5f, 0.0f,
-	 0.0f,  0.5f, 0.0f,
+	 0.9f,  0.9f, 0.0f,
+	 0.9f, -0.9f, 0.0f,
+	-0.9f, -0.9f, 0.0f,
+	-0.9f,  0.9f, 0.0f
+
+};
+unsigned int triangleIndices[] = {  // note that we start from 0!
+	0, 1, 3,   // first triangle
+	1, 2, 3    // second triangle
 };
 
 // Vertices coordinates
@@ -213,22 +219,45 @@ int main()
 
 
 
-
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), triangleVertices, GL_STATIC_DRAW);
+	
 
 	
-	unsigned int triangleVertexShader;
-	triangleVertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(triangleVertexShader, 1, &triangleVertexShaderSource, NULL);
-	glCompileShader(triangleVertexShader);
+	unsigned int triangleVertexShader = glCreateShader(GL_VERTEX_SHADER); //create a vertex shader
+	glShaderSource(triangleVertexShader, 1, &triangleVertexShaderSource, NULL); //define the source code of the shader
+	glCompileShader(triangleVertexShader); //compile the source code
 
-	unsigned int triangleFragmentShader;
-	triangleFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(triangleFragmentShader, 1, &triangleVertexShaderSource, NULL);
+	unsigned int triangleFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(triangleFragmentShader, 1, &triangleFragmentShaderSource, NULL);
 	glCompileShader(triangleFragmentShader);
+
+	unsigned int triangleShaderProgram = glCreateProgram(); //create a shader program
+	glAttachShader(triangleShaderProgram, triangleVertexShader);
+	glAttachShader(triangleShaderProgram, triangleFragmentShader); //attach both shaders to the program
+	glLinkProgram(triangleShaderProgram); //link the program
+
+	glDeleteShader(triangleVertexShader);
+	glDeleteShader(triangleFragmentShader);
+
+	unsigned int VBO, VAO, EBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO); //generate one buffer
+	glGenBuffers(1, &EBO);
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO); //bind the buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW); //give the buffer data
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(triangleIndices), triangleIndices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //0 is the location layout in the shader
+	glEnableVertexAttribArray(0); //same here as above re: 0 value
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
 	// Enables the Depth Buffer
@@ -252,6 +281,12 @@ int main()
 		// Updates and exports the camera matrix to the Vertex Shader
 		camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
+		glUseProgram(triangleShaderProgram); //use the program
+
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
 		// Draws different meshes
 		floor.Draw(shaderProgram, camera);
 
@@ -266,6 +301,10 @@ int main()
 	}
 
 	// Delete all the objects we've created
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
+	glDeleteProgram(triangleShaderProgram);
 	shaderProgram.Delete();
 	lightShader.Delete();
 	boxShader.Delete();
