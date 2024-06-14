@@ -15,9 +15,10 @@ const char *triangleVertexShaderSource = "#version 330 core\n"
 
 const char *triangleFragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
+	"uniform vec4 ourColor;\n"
     "void main()\n"
     "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0);\n"
+    "   FragColor = ourColor;\n"
 	"}\0";
 
 float triangleVertices[] = {
@@ -281,7 +282,12 @@ int main()
 		// Updates and exports the camera matrix to the Vertex Shader
 		camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
+		float timeValue = glfwGetTime();
+		float greenValue = (sin(timeValue)) / 2.0f + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(triangleShaderProgram, "ourColor");
+
 		glUseProgram(triangleShaderProgram); //use the program
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
