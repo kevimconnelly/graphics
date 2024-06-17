@@ -8,24 +8,27 @@ void processInput(GLFWwindow* window);
 
 const char *triangleVertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
+	"layout (location = 1) in vec3 aColor;\n"
+	"out vec3 ourColor;\n"
     "void main()\n"
     "{\n"
     "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+	"   ourColor = aColor;\n"
 	"}\0";
 
 const char *triangleFragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
-	"uniform vec4 ourColor;\n"
+	"in vec3 ourColor;\n"
     "void main()\n"
     "{\n"
-    "   FragColor = ourColor;\n"
+    "   FragColor = vec4(ourColor, 1.0);\n"
 	"}\0";
 
 float triangleVertices[] = {
-	 0.9f,  0.9f, 0.0f,
-	 0.9f, -0.9f, 0.0f,
-	-0.9f, -0.9f, 0.0f,
-	-0.9f,  0.9f, 0.0f
+	 0.9f,  0.9f, 0.0f,	1.0f, 0.0f, 0.0f,
+	 0.9f, -0.9f, 0.0f, 0.0f, 1.0f, 0.0f,
+	-0.9f, -0.9f, 0.0f, 0.0f, 0.0f, 1.0f,
+	-0.9f,  0.9f, 0.0f, 0.0f, 0.0f, 0.5f
 
 };
 unsigned int triangleIndices[] = {  // note that we start from 0!
@@ -221,7 +224,10 @@ int main()
 
 
 	
-
+	/*
+	Shader triangleShaderProgram("trianlge.vert", "triangle.frag");
+	triangleShaderProgram.Activate();
+	*/
 	
 	unsigned int triangleVertexShader = glCreateShader(GL_VERTEX_SHADER); //create a vertex shader
 	glShaderSource(triangleVertexShader, 1, &triangleVertexShaderSource, NULL); //define the source code of the shader
@@ -235,9 +241,12 @@ int main()
 	glAttachShader(triangleShaderProgram, triangleVertexShader);
 	glAttachShader(triangleShaderProgram, triangleFragmentShader); //attach both shaders to the program
 	glLinkProgram(triangleShaderProgram); //link the program
+	
 
 	glDeleteShader(triangleVertexShader);
 	glDeleteShader(triangleFragmentShader);
+
+	
 
 	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
@@ -252,8 +261,11 @@ int main()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(triangleIndices), triangleIndices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //0 is the location layout in the shader
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //0 is the location layout in the shader
 	glEnableVertexAttribArray(0); //same here as above re: 0 value
+	// color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -284,10 +296,10 @@ int main()
 
 		float timeValue = glfwGetTime();
 		float greenValue = (sin(timeValue)) / 2.0f + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(triangleShaderProgram, "ourColor");
+		int vertexColorLocation = glGetUniformLocation(triangleShaderProgram, "ourColor"); //Get the location of the uniform in our shaderprogram
 
 		glUseProgram(triangleShaderProgram); //use the program
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); // Pass the values we want to the location of the uniform
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -310,7 +322,7 @@ int main()
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
-	glDeleteProgram(triangleShaderProgram);
+	//glDeleteProgram(triangleShaderProgram);
 	shaderProgram.Delete();
 	lightShader.Delete();
 	boxShader.Delete();
