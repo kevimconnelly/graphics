@@ -1,4 +1,5 @@
 #include"Mesh.h"
+#include"shaderHeader.h"
 
 const unsigned int width = 800;
 const unsigned int height = 800;
@@ -227,7 +228,7 @@ int main()
 	/*
 	Shader triangleShaderProgram("trianlge.vert", "triangle.frag");
 	triangleShaderProgram.Activate();
-	*/
+	
 	
 	unsigned int triangleVertexShader = glCreateShader(GL_VERTEX_SHADER); //create a vertex shader
 	glShaderSource(triangleVertexShader, 1, &triangleVertexShaderSource, NULL); //define the source code of the shader
@@ -245,7 +246,9 @@ int main()
 
 	glDeleteShader(triangleVertexShader);
 	glDeleteShader(triangleFragmentShader);
+	*/
 
+	ShaderHeader triangleShader("Shaders/triangle.vert", "Shaders/triangle.frag");
 	
 
 	unsigned int VBO, VAO, EBO;
@@ -296,10 +299,12 @@ int main()
 
 		float timeValue = glfwGetTime();
 		float greenValue = (sin(timeValue)) / 2.0f + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(triangleShaderProgram, "ourColor"); //Get the location of the uniform in our shaderprogram
+		//int vertexColorLocation = glGetUniformLocation(triangleShaderProgram, "ourColor"); //Get the location of the uniform in our shaderprogram
+		triangleShader.use();
+		triangleShader.setFloat("ourColor", 1.0f);
 
-		glUseProgram(triangleShaderProgram); //use the program
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); // Pass the values we want to the location of the uniform
+		//glUseProgram(triangleShaderProgram); //use the program
+		//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); // Pass the values we want to the location of the uniform
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
