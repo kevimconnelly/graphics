@@ -29,7 +29,12 @@ float triangleVertices[] = {
 	 0.9f,  0.9f, 0.0f,	1.0f, 0.0f, 0.0f,
 	 0.9f, -0.9f, 0.0f, 0.0f, 1.0f, 0.0f,
 	-0.9f, -0.9f, 0.0f, 0.0f, 0.0f, 1.0f,
-	-0.9f,  0.9f, 0.0f, 0.0f, 0.0f, 0.5f
+	-0.9f,  0.9f, 0.0f, 0.0f, 0.0f, 0.5f,
+
+	// Triangle 2
+	0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
+   -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f
 
 };
 unsigned int triangleIndices[] = {  // note that we start from 0!
@@ -37,13 +42,14 @@ unsigned int triangleIndices[] = {  // note that we start from 0!
 	1, 2, 3    // second triangle
 };
 
+
 // Vertices coordinates
 Vertex vertices[] =
 { //               COORDINATES           /            COLORS          /           NORMALS         /       TEXTURE COORDINATES    //
 	Vertex{glm::vec3(-5.0f, 0.0f,  5.0f), glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(5.0f, 5.0f, 5.0f), glm::vec2(0.0f, 0.0f)},
 	Vertex{glm::vec3(-5.0f, 0.0f, -5.0f), glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(5.0f, 5.0f, 5.0f), glm::vec2(0.0f, 5.0f)},
 	Vertex{glm::vec3(5.0f, 0.0f, -5.0f), glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(5.0f, 5.0f, 5.0f), glm::vec2(5.0f, 5.0f)},
-	Vertex{glm::vec3(5.0f, 0.0f,  5.0f), glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(5.0f, 5.0f, 5.0f), glm::vec2(5.0f, 0.0f)}
+	Vertex{glm::vec3(5.0f, 0.0f,  5.0f), glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(5.0f, 5.0f, 5.0f), glm::vec2(5.0f, 0.0f)},
 };
 
 // Indices for vertices order
@@ -226,8 +232,9 @@ int main()
 
 	
 	/*
-	Shader triangleShaderProgram("trianlge.vert", "triangle.frag");
+	Shader triangleShaderProgram("triangle.vert", "triangle.frag");
 	triangleShaderProgram.Activate();
+	*/
 	
 	
 	unsigned int triangleVertexShader = glCreateShader(GL_VERTEX_SHADER); //create a vertex shader
@@ -246,9 +253,11 @@ int main()
 
 	glDeleteShader(triangleVertexShader);
 	glDeleteShader(triangleFragmentShader);
-	*/
-
+	
+	
+	/*
 	ShaderHeader triangleShader("Shaders/triangle.vert", "Shaders/triangle.frag");
+	*/
 	
 
 	unsigned int VBO, VAO, EBO;
@@ -273,7 +282,9 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
 	// Enables the Depth Buffer
@@ -299,16 +310,18 @@ int main()
 
 		float timeValue = glfwGetTime();
 		float greenValue = (sin(timeValue)) / 2.0f + 0.5f;
-		//int vertexColorLocation = glGetUniformLocation(triangleShaderProgram, "ourColor"); //Get the location of the uniform in our shaderprogram
-		triangleShader.use();
-		triangleShader.setFloat("ourColor", 1.0f);
+		int vertexColorLocation = glGetUniformLocation(triangleShaderProgram, "ourColor"); //Get the location of the uniform in our shaderprogram
+		//triangleShader.use();
+		//triangleShader.setFloat("ourColor", 1.0f);
 
-		//glUseProgram(triangleShaderProgram); //use the program
-		//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); // Pass the values we want to the location of the uniform
+		glUseProgram(triangleShaderProgram); //use the program
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); // Pass the values we want to the location of the uniformv
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
+
+
 
 		// Draws different meshes
 		floor.Draw(shaderProgram, camera);
