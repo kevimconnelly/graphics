@@ -7,37 +7,6 @@ const unsigned int height = 800;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
-const char *triangleVertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-	"layout (location = 1) in vec3 aColor;\n"
-	"out vec3 ourColor;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-	"   ourColor = aColor;\n"
-	"}\0";
-
-const char *triangleFragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-	"in vec3 ourColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(ourColor, 1.0);\n"
-	"}\0";
-
-float triangleVertices[] = {
-	 0.9f,  0.9f, 0.0f,	1.0f, 0.0f, 0.0f, 0.9f, 0.9f,
-	 0.9f, -0.9f, 0.0f, 0.0f, 1.0f, 0.0f, 0.9f, 0.0f,
-	-0.9f, -0.9f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-	-0.9f,  0.9f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 1.0f
-
-};
-unsigned int triangleIndices[] = {  // note that we start from 0!
-	0, 1, 3,   // first triangle
-	1, 2, 3    // second triangle
-};
-
-
 // Vertices coordinates
 Vertex vertices[] =
 { //               COORDINATES           /            COLORS          /           NORMALS         /       TEXTURE COORDINATES    //
@@ -152,6 +121,9 @@ int main()
 	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
 	glViewport(0, 0, width, height);
 
+	// Creates camera object
+	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+
 
 	// Original code from the tutorial
 	Texture textures[]
@@ -225,38 +197,28 @@ int main()
 
 
 
-	
+
 	/*
-	Shader triangleShaderProgram("triangle.vert", "triangle.frag");
-	triangleShaderProgram.Activate();
+	/								/
+	/		Tutorial Stuff below	/
+	/								/
+	/								/
 	*/
-	
-	
-	/*
-	unsigned int triangleVertexShader = glCreateShader(GL_VERTEX_SHADER); //create a vertex shader
-	glShaderSource(triangleVertexShader, 1, &triangleVertexShaderSource, NULL); //define the source code of the shader
-	glCompileShader(triangleVertexShader); //compile the source code
 
-	unsigned int triangleFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(triangleFragmentShader, 1, &triangleFragmentShaderSource, NULL);
-	glCompileShader(triangleFragmentShader);
+	float triangleVertices[] = {
+		0.9f,  0.9f, 0.0f,	1.0f, 0.0f, 0.0f, 0.9f, 0.9f,
+		0.9f, -0.9f, 0.0f, 0.0f, 1.0f, 0.0f, 0.9f, 0.0f,
+		-0.9f, -0.9f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		-0.9f,  0.9f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 1.0f
+	};
 
-	unsigned int triangleShaderProgram = glCreateProgram(); //create a shader program
-	glAttachShader(triangleShaderProgram, triangleVertexShader);
-	glAttachShader(triangleShaderProgram, triangleFragmentShader); //attach both shaders to the program
-	glLinkProgram(triangleShaderProgram); //link the program
-	
-
-	glDeleteShader(triangleVertexShader);
-	glDeleteShader(triangleFragmentShader);
-	
-	
-	*/
+	unsigned int triangleIndices[] = {  // note that we start from 0!
+		0, 1, 3,   // first triangle
+		1, 2, 3    // second triangle
+	};
 
 	ShaderHeader triangleShader("triangle.vert", "triangle.frag");
 	
-	
-
 	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO); //generate one buffer
@@ -291,16 +253,10 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-
-
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 
 	// Enables the Depth Buffer
 	glEnable(GL_DEPTH_TEST);
-
-	// Creates camera object
-	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
 
 	triangleShader.use();
 	glUniform1i(glGetUniformLocation(triangleShader.ID, "texture"), 0);
@@ -322,13 +278,7 @@ int main()
 
 		float timeValue = glfwGetTime();
 		float greenValue = (sin(timeValue)) / 2.0f + 0.5f;
-		//int vertexColorLocation = glGetUniformLocation(triangleShaderProgram, "ourColor"); //Get the location of the uniform in our shaderprogram
 		triangleShader.use();
-		//triangleShader.setFloat("ourColor", 1.0f);
-
-
-		//glUseProgram(triangleShaderProgram); //use the program
-		//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); // Pass the values we want to the location of the uniformv
 
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glBindVertexArray(VAO);
@@ -336,10 +286,8 @@ int main()
 		glBindVertexArray(0);
 
 
-
 		// Draws different meshes
 		floor.Draw(shaderProgram, camera);
-
 		box.Inputs(window, shaderProgram, camera, box);
 		box2.Inputs(window, boxShader2, camera, box2);
 		light.Inputs(window, lightShader, camera, light);
@@ -354,13 +302,17 @@ int main()
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
-	//glDeleteProgram(triangleShaderProgram);
+	
+
+
 	shaderProgram.Delete();
 	lightShader.Delete();
 	boxShader.Delete();
 	boxShader2.Delete();
+
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
+
 	// Terminate GLFW before ending the program
 	glfwTerminate();
 	return 0;
