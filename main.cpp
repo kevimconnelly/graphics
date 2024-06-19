@@ -26,15 +26,10 @@ const char *triangleFragmentShaderSource = "#version 330 core\n"
 	"}\0";
 
 float triangleVertices[] = {
-	 0.9f,  0.9f, 0.0f,	1.0f, 0.0f, 0.0f,
-	 0.9f, -0.9f, 0.0f, 0.0f, 1.0f, 0.0f,
-	-0.9f, -0.9f, 0.0f, 0.0f, 0.0f, 1.0f,
-	-0.9f,  0.9f, 0.0f, 0.0f, 0.0f, 0.5f,
-
-	// Triangle 2
-	0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
-	0.0f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
-   -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f
+	 0.9f,  0.9f, 0.0f,	1.0f, 0.0f, 0.0f, 0.9f, 0.9f,
+	 0.9f, -0.9f, 0.0f, 0.0f, 1.0f, 0.0f, 0.9f, 0.0f,
+	-0.9f, -0.9f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+	-0.9f,  0.9f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 1.0f
 
 };
 unsigned int triangleIndices[] = {  // note that we start from 0!
@@ -273,11 +268,23 @@ int main()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(triangleIndices), triangleIndices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //0 is the location layout in the shader
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0); //0 is the location layout in the shader
 	glEnableVertexAttribArray(0); //same here as above re: 0 value
 	// color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+	//tex attributes
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load("Textures/container.jpg", &width, &height, &nrChannels, 0);
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(data);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -310,13 +317,15 @@ int main()
 
 		float timeValue = glfwGetTime();
 		float greenValue = (sin(timeValue)) / 2.0f + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(triangleShaderProgram, "ourColor"); //Get the location of the uniform in our shaderprogram
+		//int vertexColorLocation = glGetUniformLocation(triangleShaderProgram, "ourColor"); //Get the location of the uniform in our shaderprogram
 		//triangleShader.use();
 		//triangleShader.setFloat("ourColor", 1.0f);
 
-		glUseProgram(triangleShaderProgram); //use the program
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); // Pass the values we want to the location of the uniformv
 
+		//glUseProgram(triangleShaderProgram); //use the program
+		//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); // Pass the values we want to the location of the uniformv
+
+		glBindTexture(GL_TEXTURE_2D, texture);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
