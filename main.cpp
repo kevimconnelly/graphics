@@ -232,6 +232,7 @@ int main()
 	*/
 	
 	
+	/*
 	unsigned int triangleVertexShader = glCreateShader(GL_VERTEX_SHADER); //create a vertex shader
 	glShaderSource(triangleVertexShader, 1, &triangleVertexShaderSource, NULL); //define the source code of the shader
 	glCompileShader(triangleVertexShader); //compile the source code
@@ -250,9 +251,10 @@ int main()
 	glDeleteShader(triangleFragmentShader);
 	
 	
-	/*
-	ShaderHeader triangleShader("Shaders/triangle.vert", "Shaders/triangle.frag");
 	*/
+
+	ShaderHeader triangleShader("triangle.vert", "triangle.frag");
+	
 	
 
 	unsigned int VBO, VAO, EBO;
@@ -300,6 +302,9 @@ int main()
 	// Creates camera object
 	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
 
+	triangleShader.use();
+	glUniform1i(glGetUniformLocation(triangleShader.ID, "texture"), 0);
+
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -318,7 +323,7 @@ int main()
 		float timeValue = glfwGetTime();
 		float greenValue = (sin(timeValue)) / 2.0f + 0.5f;
 		//int vertexColorLocation = glGetUniformLocation(triangleShaderProgram, "ourColor"); //Get the location of the uniform in our shaderprogram
-		//triangleShader.use();
+		triangleShader.use();
 		//triangleShader.setFloat("ourColor", 1.0f);
 
 
