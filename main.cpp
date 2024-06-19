@@ -1,5 +1,10 @@
 #include"Mesh.h"
 #include"shaderHeader.h"
+#include <iostream>
+#include<stb/stb_image.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include<fstream>
 
 const unsigned int width = 800;
 const unsigned int height = 800;
@@ -124,14 +129,15 @@ int main()
 	// Creates camera object
 	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
 
-
+	
 	// Original code from the tutorial
 	Texture textures[]
 	{
 		Texture("Textures/planks.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
-		Texture("Textures/planksSpec.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
+		Texture("Textures/planksSpec.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE),
+		Texture("Textures/container.jpg", "diffuse", 2, GL_RGB, GL_UNSIGNED_BYTE),
 	};
-
+	/*
 	// Generates Shader object using shaders default.vert and default.frag
 	Shader shaderProgram("default.vert", "default.frag");
 	// Store mesh data in vectors for the mesh
@@ -194,16 +200,17 @@ int main()
 	glUniformMatrix4fv(glGetUniformLocation(boxShader2.ID, "model"), 1, GL_FALSE, glm::value_ptr(boxModel2));
 	glUniform4f(glGetUniformLocation(boxShader2.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(boxShader2.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	*/
 
 
 
-
-	/*
+	/*								
+	/								/
 	/								/
 	/		Tutorial Stuff below	/
 	/								/
 	/								/
-	*/
+									*/								
 
 	float triangleVertices[] = {
 		0.9f,  0.9f, 0.0f,	1.0f, 0.0f, 0.0f, 0.9f, 0.9f,
@@ -242,12 +249,37 @@ int main()
 	glEnableVertexAttribArray(2);
 
 	int width, height, nrChannels;
+	unsigned int texture1, texture2;
+
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	unsigned char* data = stbi_load("Textures/container.jpg", &width, &height, &nrChannels, 0);
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(data);
+
+	
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	data = stbi_load("Textures/awesomeface.png", &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
 	stbi_image_free(data);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -259,7 +291,8 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	triangleShader.use();
-	glUniform1i(glGetUniformLocation(triangleShader.ID, "texture"), 0);
+	glUniform1i(glGetUniformLocation(triangleShader.ID, "texture1"), 0);
+	triangleShader.setInt("texture2", 1);
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -278,19 +311,25 @@ int main()
 
 		float timeValue = glfwGetTime();
 		float greenValue = (sin(timeValue)) / 2.0f + 0.5f;
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+
 		triangleShader.use();
 
-		glBindTexture(GL_TEXTURE_2D, texture);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
-
+		/*
 		// Draws different meshes
 		floor.Draw(shaderProgram, camera);
 		box.Inputs(window, shaderProgram, camera, box);
 		box2.Inputs(window, boxShader2, camera, box2);
 		light.Inputs(window, lightShader, camera, light);
+		*/
 
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
@@ -304,11 +343,12 @@ int main()
 	glDeleteBuffers(1, &EBO);
 	
 
-
+	/*
 	shaderProgram.Delete();
 	lightShader.Delete();
 	boxShader.Delete();
 	boxShader2.Delete();
+	*/
 
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
