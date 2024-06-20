@@ -225,6 +225,9 @@ int main()
 	};
 
 	ShaderHeader triangleShader("triangle.vert", "triangle.frag");
+
+	
+	//trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 	
 	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
@@ -291,6 +294,8 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	triangleShader.use();
+	unsigned int transformLoc = glGetUniformLocation(triangleShader.ID, "transform");
+	
 	glUniform1i(glGetUniformLocation(triangleShader.ID, "texture1"), 0);
 	triangleShader.setInt("texture2", 1);
 
@@ -317,7 +322,12 @@ int main()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
+		glm::mat4 trans = glm::mat4(1.0f);
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
 		triangleShader.use();
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
