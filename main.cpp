@@ -137,7 +137,7 @@ int main()
 		Texture("Textures/planksSpec.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE),
 		Texture("Textures/container.jpg", "diffuse", 2, GL_RGB, GL_UNSIGNED_BYTE),
 	};
-	/*
+	
 	// Generates Shader object using shaders default.vert and default.frag
 	Shader shaderProgram("default.vert", "default.frag");
 	// Store mesh data in vectors for the mesh
@@ -200,7 +200,7 @@ int main()
 	glUniformMatrix4fv(glGetUniformLocation(boxShader2.ID, "model"), 1, GL_FALSE, glm::value_ptr(boxModel2));
 	glUniform4f(glGetUniformLocation(boxShader2.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(boxShader2.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-	*/
+	
 
 
 
@@ -210,7 +210,7 @@ int main()
 	/		Tutorial Stuff below	/
 	/								/
 	/								/
-									*/								
+																
 
 	/*
 	float triangleVertices[] = {
@@ -219,7 +219,7 @@ int main()
 		-0.9f, -0.9f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 		-0.9f,  0.9f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 1.0f
 	};
-	*/
+	
 
 	float triangleVertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -350,13 +350,19 @@ int main()
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	*/
+
 	// Enables the Depth Buffer
 	glEnable(GL_DEPTH_TEST);
+
+	/*
 
 	triangleShader.use();
 	
 	glUniform1i(glGetUniformLocation(triangleShader.ID, "texture1"), 0);
 	triangleShader.setInt("texture2", 1);
+
+	*/
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -376,13 +382,16 @@ int main()
 		float timeValue = glfwGetTime();
 		float greenValue = (sin(timeValue)) / 2.0f + 0.5f;
 
+		/*
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
+		
+
 		glm::mat4 model = glm::mat4(1.0f);
-		//model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
 		glm::mat4 view = glm::mat4(1.0f);
@@ -417,13 +426,15 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 
-		/*
+		*/
+
+		
 		// Draws different meshes
 		floor.Draw(shaderProgram, camera);
 		box.Inputs(window, shaderProgram, camera, box);
 		box2.Inputs(window, boxShader2, camera, box2);
 		light.Inputs(window, lightShader, camera, light);
-		*/
+		
 
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
@@ -432,17 +443,17 @@ int main()
 	}
 
 	// Delete all the objects we've created
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
+	//glDeleteVertexArrays(1, &VAO);
+	//glDeleteBuffers(1, &VBO);
+	//glDeleteBuffers(1, &EBO);
 	
 
-	/*
+	
 	shaderProgram.Delete();
 	lightShader.Delete();
 	boxShader.Delete();
 	boxShader2.Delete();
-	*/
+	
 
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
