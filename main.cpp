@@ -127,7 +127,7 @@ int main()
 	glViewport(0, 0, width, height);
 
 	// Creates camera object
-	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+	Camera camera(width, height, glm::vec3(0.0f, 1.0f, 2.0f));
 
 	
 	// Original code from the tutorial
@@ -224,9 +224,9 @@ int main()
 		
 		// Draws different meshes
 		floor.Draw(shaderProgram, camera);
-		box.Inputs(window, shaderProgram, camera, box);
-		box2.Inputs(window, boxShader2, camera, box2);
-		light.Inputs(window, lightShader, camera, light);
+		box.Draw(shaderProgram, camera);
+		box2.Draw(boxShader2, camera);
+		light.Draw(lightShader, camera);
 		
 
 		// Swap the back buffer with the front buffer
