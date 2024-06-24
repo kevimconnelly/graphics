@@ -14,7 +14,7 @@ void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane)
 	glm::mat4 projection = glm::mat4(1.0f);
 
 	// Makes camera look in the right direction from the right position
-	view = glm::lookAt(Position, Position + Orientation, glm::vec3(0.0f, 2.0f, 0.0f));
+	view = glm::lookAt(Position, Position + Orientation, Up);
 	// Adds perspective to the scene
 	projection = glm::perspective(glm::radians(FOVdeg), (float)width / height, nearPlane, farPlane);
 
@@ -33,7 +33,8 @@ void Camera::Inputs(GLFWwindow* window)
 	// Handles key inputs
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		Position += (speed / 20.0f) * Orientation;
+		std::cout << Orientation.x << Orientation.y << Orientation.z << "\n";
+		Position += (speed / 20.0f) * glm::vec3(1.0f, Orientation.y, Orientation.z);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
@@ -47,12 +48,6 @@ void Camera::Inputs(GLFWwindow* window)
 	{
 		Position += (speed / 20.0f) * glm::normalize(glm::cross(Orientation, Up));
 	}
-	/*
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-	{
-		Position += (speed / 20.0f) * Up;
-	}
-	*/
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{
 		Position += (speed / 20.0f) * -Up;
@@ -88,11 +83,11 @@ void Camera::Inputs(GLFWwindow* window)
 
 		// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
 		// and then "transforms" them into degrees 
-		//float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
+		float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
 		float rotY = sensitivity * (float)(mouseX - (width / 2)) / width;
 
-		// Calculates upcoming vertical change in the Orientation
-		glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(90.0f), glm::normalize(glm::cross(Orientation, Up)));
+		// Calculates upcoming vertical change in the Orientation]
+		glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));
 
 		// Decides whether or not the next vertical Orientation is legal or not
 		if (abs(glm::angle(newOrientation, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
