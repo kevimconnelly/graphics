@@ -194,9 +194,16 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		float timeValue = glfwGetTime();
+
+		//Get delta time
+		float deltaTime = 0.0f;
+		float lastFrame = 0.0f;
+
+		deltaTime = timeValue - lastFrame;
+		lastFrame = timeValue;
 		
 		// Handles camera inputs
-		camera.Inputs(window);
+		camera.Inputs(window, deltaTime);
 		// Updates and exports the camera matrix to the Vertex Shader
 		camera.updateMatrix(45.0f, 0.1f, 100.0f);
 

@@ -27,6 +27,7 @@ public:
 	int width;
 	int height;
 
+
 	// Adjust the speed of the camera and it's sensitivity when looking around
 	float speed = 1.0f;
 	float sensitivity = 20.0f;
@@ -39,6 +40,6 @@ public:
 	// Exports the camera matrix to a shader
 	void Matrix(Shader& shader, const char* uniform);
 	// Handles camera inputs
-	void Inputs(GLFWwindow* window);
+	void Inputs(GLFWwindow* window, float deltaTime);
 };
 #endif
