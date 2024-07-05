@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include<fstream>
+#include"Model.h"
 
 const unsigned int width = 800;
 const unsigned int height = 800;
@@ -179,6 +180,9 @@ int main()
 	glm::mat4 boxModel2 = glm::mat4(1.0f);
 	boxModel2 = glm::translate(boxModel2, boxPos2);
 
+	// Original code from the tutorial
+	Model model("Models/bunny/scene.gltf");
+
 
 	// Enables the Depth Buffer
 	glEnable(GL_DEPTH_TEST);
@@ -234,6 +238,8 @@ int main()
 		box.Draw(shaderProgram, camera);
 		box2.Draw(boxShader2, camera);
 		light.Draw(lightShader, camera);
+
+		model.Draw(shaderProgram, camera);
 		
 
 		// Swap the back buffer with the front buffer
