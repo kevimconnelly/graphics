@@ -33,7 +33,7 @@ void Camera::Inputs(GLFWwindow* window, float deltaTime)
 	// Handles key inputs
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		Position += (speed / deltaTime) * glm::vec3(Orientation.x, 0.0f, Orientation.z);
+		Position += (speed / deltaTime) * glm::vec3(Orientation.x, Orientation.y, Orientation.z);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
@@ -41,7 +41,7 @@ void Camera::Inputs(GLFWwindow* window, float deltaTime)
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		Position += (speed / deltaTime) * -(glm::vec3(Orientation.x, 0.0f, Orientation.z));
+		Position += (speed / deltaTime) * -(glm::vec3(Orientation.x, Orientation.y, Orientation.z));
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
