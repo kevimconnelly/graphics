@@ -1,10 +1,3 @@
-#include"Mesh.h"
-#include"shaderHeader.h"
-#include <iostream>
-#include<stb/stb_image.h>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include<fstream>
 #include"Model.h"
 
 const unsigned int width = 800;
@@ -120,4 +113,4 @@ void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-}
+};
