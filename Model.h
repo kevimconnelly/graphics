@@ -6,7 +6,6 @@
 
 using json = nlohmann::json;
 
-
 class Model
 {
 public:

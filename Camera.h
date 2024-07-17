@@ -27,10 +27,9 @@ public:
 	int width;
 	int height;
 
-
 	// Adjust the speed of the camera and it's sensitivity when looking around
-	float speed = 1.0f;
-	float sensitivity = 20.0f;
+	float speed = 200.0f;
+	float sensitivity = 50.0f;
 
 	// Camera constructor to set up initial values
 	Camera(int width, int height, glm::vec3 position);
@@ -40,6 +39,6 @@ public:
 	// Exports the camera matrix to a shader
 	void Matrix(Shader& shader, const char* uniform);
 	// Handles camera inputs
-	void Inputs(GLFWwindow* window, float deltaTime);
+	void Inputs(GLFWwindow* window);
 };
 #endif

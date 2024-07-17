@@ -78,15 +78,18 @@ int main()
 
 		float timeValue = glfwGetTime();
 
+		/*
 		//Get delta time
 		float deltaTime = 0.0f;
 		float lastFrame = 0.0f;
 
 		deltaTime = timeValue - lastFrame;
 		lastFrame = timeValue;
+		*/
 		
+		camera.speed = 0.01f;
 		// Handles camera inputs
-		camera.Inputs(window, deltaTime);
+		camera.Inputs(window);
 
 		// Updates and exports the camera matrix to the Vertex Shader
 		camera.updateMatrix(45.0f, 0.1f, 100.0f);
